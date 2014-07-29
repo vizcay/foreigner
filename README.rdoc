@@ -7,6 +7,7 @@ The following adapters are supported:
 
 * mysql2
 * postgres
+* fb
 * sqlite (foreign key methods are a no-op)
 
 == Installation
