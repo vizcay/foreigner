@@ -15,7 +15,7 @@ module Foreigner
           FROM
             rdb$relation_constraints detail_relation_constraints
             JOIN rdb$index_segments detail_index_segments ON
-              detail_relation_constraints.rdb$index_name = detail_index_segments.rdb$index_name 
+              detail_relation_constraints.rdb$index_name = detail_index_segments.rdb$index_name
             JOIN rdb$ref_constraints ON
               detail_relation_constraints.rdb$constraint_name = rdb$ref_constraints.rdb$constraint_name
             JOIN rdb$relation_constraints master_relation_constraints ON
@@ -49,12 +49,7 @@ module Foreigner
   end
 end
 
-begin
-  ActiveRecord::ConnectionAdapters::FbAdapter.class_eval do
-    alias_method :old_indexes, :indexes
-    remove_method :indexes
-    include Foreigner::ConnectionAdapters::FbAdapter
-  end
-rescue
+ActiveRecord::ConnectionAdapters::FbAdapter.class_eval do
+  alias_method :old_indexes, :indexes
+  include Foreigner::ConnectionAdapters::FbAdapter
 end
-
