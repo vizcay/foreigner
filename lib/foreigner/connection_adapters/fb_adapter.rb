@@ -45,6 +45,15 @@ module Foreigner
       def indexes(table_name, name = nil)
         old_indexes(table_name, name).select { |idx| not foreign_keys(table_name).any? { |fk| fk.options[:name] == idx.name } }
       end
+
+      def dependency_sql(dependency)
+        case dependency
+          when :nullify then "ON DELETE SET NULL"
+          when :delete  then "ON DELETE CASCADE"
+          when :restrict then "ON DELETE NO ACTION"
+          else ""
+        end
+      end
     end
   end
 end
