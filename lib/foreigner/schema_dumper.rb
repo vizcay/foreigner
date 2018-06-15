@@ -4,7 +4,6 @@ module Foreigner
 
     included do
       def foreign_keys(table_name, stream)
-        puts table_name
         if (foreign_keys = @connection.foreign_keys(table_name)).any?
           add_foreign_key_statements = foreign_keys.map do |foreign_key|
             '  ' + self.class.dump_foreign_key(foreign_key)
