@@ -3,7 +3,17 @@ module Foreigner
     extend ActiveSupport::Concern
 
     included do
-      alias_method_chain :tables, :foreign_keys
+      def foreign_keys(table_name, stream)
+        puts table_name
+        if (foreign_keys = @connection.foreign_keys(table_name)).any?
+          add_foreign_key_statements = foreign_keys.map do |foreign_key|
+            '  ' + self.class.dump_foreign_key(foreign_key)
+          end
+
+          stream.puts add_foreign_key_statements.sort.join("\n")
+          stream.puts
+        end
+      end
     end
 
     module ClassMethods
@@ -29,32 +39,5 @@ module Foreigner
         table.gsub(/^(#{ActiveRecord::Base.table_name_prefix})(.+)(#{ActiveRecord::Base.table_name_suffix})$/,  "\\2")
       end
     end
-
-    def tables_with_foreign_keys(stream)
-      tables_without_foreign_keys(stream)
-      @connection.tables.sort.each do |table|
-        next if ['schema_migrations', ignore_tables].flatten.any? do |ignored|
-          case ignored
-          when String; table == ignored
-          when Regexp; table =~ ignored
-          else
-            raise StandardError, 'ActiveRecord::SchemaDumper.ignore_tables accepts an array of String and / or Regexp values.'
-          end
-        end
-        foreign_keys(table, stream)
-      end
-    end
-
-    private
-      def foreign_keys(table_name, stream)
-        if (foreign_keys = @connection.foreign_keys(table_name)).any?
-          add_foreign_key_statements = foreign_keys.map do |foreign_key|
-            '  ' + self.class.dump_foreign_key(foreign_key)
-          end
-
-          stream.puts add_foreign_key_statements.sort.join("\n")
-          stream.puts
-        end
-      end
   end
 end

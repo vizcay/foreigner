@@ -28,7 +28,7 @@ module Foreigner
         sql =
           "ADD CONSTRAINT #{quote_column_name(foreign_key_name)} " +
           "FOREIGN KEY (#{quote_column_name(column)}) " +
-          "REFERENCES #{quote_table_name(ActiveRecord::Migrator.proper_table_name(to_table))}(#{primary_key})"
+          "REFERENCES #{quote_table_name(to_table)}(#{primary_key})"
         sql << " #{dependency}" if dependency.present?
         sql << " #{options[:options]}" if options[:options]
 
